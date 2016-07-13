@@ -7,11 +7,11 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class Server {
 
-  private[this] implicit val system = ActorSystem("server")
+  implicit val system = ActorSystem("server")
   private[this] implicit val materializer = ActorMaterializer()
 
   private[this] implicit val executionContext = system.dispatcher
@@ -21,7 +21,16 @@ class Server {
   val route =
     path("") {
       get {
-        complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, "Hello, World!"))
+        complete {
+          HttpEntity(ContentTypes.`text/plain(UTF-8)`, "Hello, World!")
+        }
+      }
+    } ~
+    path("download" / "test.txt") {
+      get {
+        complete {
+          HttpEntity(ContentTypes.`application/octet-stream`, "asdf".getBytes)
+        }
       }
     }
 
@@ -29,7 +38,14 @@ class Server {
 
 }
 
-class RunningServer(binding: Future[ServerBinding])(implicit executionContext: ExecutionContext) {
+class RunningServer(binding: Future[ServerBinding])(implicit val system: ActorSystem) {
+  private[this] implicit val _ = system.dispatcher
+
+  def stop() = {
+    val map = binding.flatMap(_.unbind())
+    map.onComplete(_ ⇒ system.terminate())
+    map
+  }
 
   def listenPort = binding map (_.localAddress.getPort)
 
