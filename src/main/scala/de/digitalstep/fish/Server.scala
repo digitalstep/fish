@@ -4,6 +4,8 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 
@@ -22,17 +24,27 @@ class Server {
     path("") {
       get {
         complete {
-          HttpEntity(ContentTypes.`text/plain(UTF-8)`, "Hello, World!")
+          HttpEntity(`text/plain(UTF-8)`, "Hello, World!")
         }
       }
     } ~
-    path("download" / "test.txt") {
-      get {
-        complete {
-          HttpEntity(ContentTypes.`application/octet-stream`, "asdf".getBytes)
+      path("upload") {
+        post {
+          complete {
+            HttpResponse(
+              status = Created,
+              entity = HttpEntity("uid")
+            )
+          }
+        }
+      } ~
+      path("download" / "uid") {
+        get {
+          complete {
+            HttpEntity(`application/octet-stream`, "asdf".getBytes)
+          }
         }
       }
-    }
 
   def start() = new RunningServer(Http().bindAndHandle(route, "localhost", 0))
 

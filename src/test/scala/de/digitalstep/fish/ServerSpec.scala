@@ -1,10 +1,8 @@
 package de.digitalstep.fish
 
-import akka.actor.ActorSystem
 import akka.http.scaladsl.model.HttpResponse
 import akka.http.scaladsl.model.StatusCodes._
-import akka.stream.{ActorMaterializer, StreamTcpException}
-import akka.util.ByteString
+import akka.stream.StreamTcpException
 import org.scalatest._
 
 import scala.concurrent.Await
@@ -20,6 +18,7 @@ class ServerSpec extends FreeSpec with Matchers {
 
       def testClient = TestClient(port = listenPort)
       val testFile = File("test.txt", "asdf".getBytes().toList)
+      val testUid = "uid"
 
       "should catch a free port" in {
         listenPort should be > 0
@@ -30,11 +29,11 @@ class ServerSpec extends FreeSpec with Matchers {
       }
 
       "should accept a file upload" in {
-        testClient.upload(testFile) shouldBe HttpResponse(Created)
+        testClient.upload(testFile) shouldBe testUid
       }
 
       "deliver a previously uploaded file" in {
-        testClient.download(testFile.filename) shouldBe testFile
+        testClient.download(testUid) shouldBe testFile
       }
 
       "can be stopped" in {
