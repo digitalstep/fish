@@ -42,8 +42,7 @@ class TestClient(host: String, port: Int) extends LazyLogging {
   }
 
   def download(uid: String): File = {
-    val response = request(s"download/$uid")
-    val entity = response map {
+    val entity = request(s"download/$uid") map {
       case HttpResponse(OK, h, e, _) ⇒ e
       case HttpResponse(status, _, _, _) ⇒ throw new IllegalArgumentException(s"Unexpected response status code $status.")
     }

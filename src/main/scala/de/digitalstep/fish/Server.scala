@@ -15,7 +15,6 @@ class Server {
 
   implicit val system = ActorSystem("server")
   private[this] implicit val materializer = ActorMaterializer()
-
   private[this] implicit val executionContext = system.dispatcher
 
   val listenPort = 1

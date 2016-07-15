@@ -1,7 +1,5 @@
 package de.digitalstep.fish
 
-import akka.http.scaladsl.model.HttpResponse
-import akka.http.scaladsl.model.StatusCodes._
 import akka.stream.StreamTcpException
 import org.scalatest._
 
@@ -16,7 +14,7 @@ class ServerSpec extends FreeSpec with Matchers {
       val server = new Server().start()
       val listenPort = Await.result(server.listenPort, 2.seconds)
 
-      def testClient = TestClient(port = listenPort)
+      val testClient = TestClient(port = listenPort)
       val testFile = File("test.txt", "asdf".getBytes().toList)
       val testUid = "uid"
 
@@ -40,12 +38,20 @@ class ServerSpec extends FreeSpec with Matchers {
         Await.ready(server.stop(), 2.seconds)
       }
 
-      "and should not accept TCP connections anymore" in {
+    }
+    "when stopped" - {
+      val server = new Server().start()
+
+      "should not accept TCP connections anymore" in {
+        val testClient = TestClient(port = Await.result(server.listenPort, 2.seconds))
+        Await.ready(server.stop(), 2.seconds)
         intercept[StreamTcpException] {
           testClient.index()
         }
       }
+
     }
+
   }
 
 }
