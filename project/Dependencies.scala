@@ -16,19 +16,18 @@ object Dependencies {
 
   val akka = Seq(
     "com.typesafe.akka"            %% "akka-actor"          % Version.Akka,
+    "com.typesafe.akka"            %% "akka-remote"         % Version.Akka,
     "com.typesafe.akka"            %% "akka-http-core"      % Version.Akka,
     "de.heikoseeberger"            %% "akka-http-circe"     % Version.AkkaHttpCirce
   )
 
   val circe = Seq(
-                                      "circe-core",
-                                      "circe-generic",
-                                      "circe-parser",
-                                      "circe-java8",
-                                      "circe-optics"
-  ) map {
-    "io.circe"                     %% _                     % Version.Circe
-  }
+    "io.circe"                     %% "circe-core"          % Version.Circe,
+    "io.circe"                     %% "circe-generic"       % Version.Circe,
+    "io.circe"                     %% "circe-parser"        % Version.Circe,
+    "io.circe"                     %% "circe-java8"         % Version.Circe,
+    "io.circe"                     %% "circe-optics"        % Version.Circe
+  )
 
   val swagger = Seq(
     "com.github.swagger-akka-http" %% "swagger-akka-http"   % Version.SwaggerAkkaHttp
