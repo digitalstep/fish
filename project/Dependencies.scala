@@ -18,6 +18,7 @@ object Dependencies {
     "com.typesafe.akka"            %% "akka-actor"          % Version.Akka,
     "com.typesafe.akka"            %% "akka-remote"         % Version.Akka,
     "com.typesafe.akka"            %% "akka-http-core"      % Version.Akka,
+    "com.typesafe.akka"            %% "akka-stream-testkit" % Version.Akka           % Test,
     "de.heikoseeberger"            %% "akka-http-circe"     % Version.AkkaHttpCirce
   )
 
@@ -38,12 +39,12 @@ object Dependencies {
     "com.typesafe.scala-logging"   %% "scala-logging"       % Version.ScalaLogging,
     "org.slf4j"                     % "log4j-over-slf4j"    % Version.Slf4J,
     "org.slf4j"                     % "jcl-over-slf4j"      % Version.Slf4J,
-    "ch.qos.logback"                % "logback-classic"     % Version.Logback
+    "ch.qos.logback"                % "logback-classic"     % Version.Logback        % Runtime
   )
 
   val scalatest = Seq(
     "org.scalactic"                %% "scalactic"           % Version.ScalaTest,
-    "org.scalatest"                %% "scalatest"           % Version.ScalaTest % Test
+    "org.scalatest"                %% "scalatest"           % Version.ScalaTest      % Test
   )
 
 }

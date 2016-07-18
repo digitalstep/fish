@@ -1,6 +1,7 @@
 package de.digitalstep.fish
 
-import java.nio.file.Paths
+import java.io.InputStream
+import java.nio.file.{Path, Paths}
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
@@ -15,14 +16,14 @@ class FileManager {
   private[this] implicit val executionContext = materializer.system.dispatcher
 
   def load(uid: String) = {
-    val source = FileIO.fromPath(targetFolder.resolve("test.txt"))
-    val sink = source.runFold(ByteString(""))(_ ++ _)
-    File("test.txt", "asdf".getBytes.toList)
+    val metadata = FileMetadata("test.txt")
+    val source = StreamConverters.fromInputStream(() ⇒ getClass.getResourceAsStream("/testfile.txt"))
+    (metadata, source)
   }
 
 
-  def save(file: File): String = {
-    val source = Source.fromIterator(file.bytes.iterator _).map(ByteString(_))
+  def save(file: FileMetadata): String = {
+    val source = Source.fromIterator(() ⇒ "asdf".getBytes.iterator).map(ByteString(_))
     val sink = FileIO.toPath(targetFolder.resolve("test.txt"))
 
     val result = source.runWith(sink)

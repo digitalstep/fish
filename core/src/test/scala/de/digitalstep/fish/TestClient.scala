@@ -15,6 +15,8 @@ import scala.concurrent.{Await, Future}
 
 
 object TestClient {
+  def localhost(port: Int) = new TestClient("localhost", port)
+
   def apply(host: String = "localhost", port: Int) = new TestClient(host, port)
 }
 
@@ -30,7 +32,7 @@ class TestClient(host: String, port: Int) extends LazyLogging {
     1.second
   )
 
-  def upload(file: File): String = {
+  def upload(file: FileMetadata): String = {
 
     val eventualResponse = request(HttpRequest(
       uri = s"http://$host:$port/upload",
@@ -41,14 +43,14 @@ class TestClient(host: String, port: Int) extends LazyLogging {
     Await.result(eventualResponse flatMap responseToEventualString, 1.second)
   }
 
-  def download(uid: String): File = {
+  def download(uid: String): FileMetadata = {
     val entity = request(s"download/$uid") map {
       case HttpResponse(OK, h, e, _) ⇒ e
       case HttpResponse(status, _, _, _) ⇒ throw new IllegalArgumentException(s"Unexpected response status code $status.")
     }
 
     val bytes = Await.result(entity flatMap entityToEventualByteString map (_.toList), 1.second)
-    File("test.txt", bytes)
+    FileMetadata("test.txt")
   }
 
   private[this] def request(path: String): Future[HttpResponse] =
@@ -62,15 +64,9 @@ class TestClient(host: String, port: Int) extends LazyLogging {
   }
 
   private[this] def responseToEventualString(response: HttpResponse) =
-    responseToEventualByteString(response) map (_.utf8String)
+    entityToEventualByteString(response.entity) map (_.utf8String)
 
-  private[this] def responseToEventualByteString(response: HttpResponse): Future[ByteString] =
-    entityToEventualByteString(response.entity)
-
-  private[this] def entityToEventualByteString(entity: ResponseEntity): Future[ByteString] =
-    byteSourceToString(entity.dataBytes)
-
-  private[this] def byteSourceToString(bytes: Source[ByteString, Any]): Future[ByteString] =
-    bytes.runFold(ByteString(""))(_ ++ _)
+  private[this] def entityToEventualByteString(entity: ResponseEntity) =
+    entity.dataBytes.runFold(ByteString(""))(_ ++ _)
 
 }

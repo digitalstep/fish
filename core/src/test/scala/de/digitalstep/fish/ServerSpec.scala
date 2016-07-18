@@ -5,6 +5,7 @@ import org.scalatest._
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import scala.util.{Try, Success, Failure}
 
 class ServerSpec extends FreeSpec with Matchers {
 
@@ -15,7 +16,7 @@ class ServerSpec extends FreeSpec with Matchers {
       val listenPort = Await.result(server.listenPort, 2.seconds)
 
       val testClient = TestClient(port = listenPort)
-      val testFile = File("test.txt", "asdf".getBytes().toList)
+      val testFile = FileMetadata("test.txt")
       val testUid = "uid"
 
       "should catch a free port" in {
@@ -39,11 +40,14 @@ class ServerSpec extends FreeSpec with Matchers {
       }
 
     }
+
     "when stopped" - {
       val server = new Server().start()
 
       "should not accept TCP connections anymore" in {
-        val testClient = TestClient(port = Await.result(server.listenPort, 2.seconds))
+        val testClient = TestClient.localhost(Await.result(server.listenPort, 1.second))
+        testClient.index()
+
         Await.ready(server.stop(), 2.seconds)
         intercept[StreamTcpException] {
           testClient.index()
