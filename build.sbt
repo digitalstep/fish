@@ -2,9 +2,22 @@ import Dependencies._
 
 name := "fish"
 
+
+lazy val root = (project in file(".")).
+  aggregate(
+    core,
+    cluster,
+    `actor-remoting`
+  )
+
 lazy val core = project.
   settings(
     libraryDependencies ++= akka ++ circe ++ logging ++ scalatest
+  )
+
+lazy val cluster = project.
+  settings(
+    libraryDependencies ++= akka ++ logging ++ scalatest
   )
 
 lazy val `actor-remoting` = project.
@@ -13,7 +26,7 @@ lazy val `actor-remoting` = project.
     libraryDependencies             ++= akka ++ circe ++ logging ++ scalatest,
     compile             in MultiJvm <<= (compile in MultiJvm) triggeredBy (compile in Test),
     parallelExecution   in Test      := true,
-    executeTests in Test <<= (executeTests in Test, executeTests in MultiJvm) map {
+    executeTests        in Test     <<= (executeTests in Test, executeTests in MultiJvm) map {
       case (testResults, multiNodeResults)  =>
         val overall =
           if (testResults.overall.id < multiNodeResults.overall.id)

@@ -13,10 +13,10 @@ object Dependencies {
     val SwaggerAkkaHttp = "0.6.2"
   }
 
-
   val akka = Seq(
     "com.typesafe.akka"            %% "akka-actor"          % Version.Akka,
     "com.typesafe.akka"            %% "akka-remote"         % Version.Akka,
+    "com.typesafe.akka"            %% "akka-cluster"        % Version.Akka,
     "com.typesafe.akka"            %% "akka-http-core"      % Version.Akka,
     "com.typesafe.akka"            %% "akka-stream-testkit" % Version.Akka           % Test,
     "de.heikoseeberger"            %% "akka-http-circe"     % Version.AkkaHttpCirce
