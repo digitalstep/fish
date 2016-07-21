@@ -1,7 +1,6 @@
+#+TITLE: FiSh
 
-[[https://travis-ci.org/digitalstep/fish.svg?branch=master][Build Status]]
+[[https://travis-ci.org/digitalstep/fish.svg?branch=master]]
 
 * FiSh 
 FiSh is an acronym for File-Sharing.
-
-
