@@ -4,10 +4,6 @@ import akka.stream.testkit.scaladsl.TestSink
 import akka.util.ByteString
 import org.scalatest.{FreeSpec, Matchers}
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
-import scala.io._
-
 class FileManagerSpec extends FreeSpec with Matchers {
 
   "A file manager " - {
