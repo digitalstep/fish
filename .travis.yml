@@ -2,7 +2,7 @@ language: scala
 scala:
   - 2.11.8
 jdk:
-  - oraclejdky
+  - oraclejdk7
   - oraclejdk8
 
 script: sbt ++$TRAVIS_SCALA_VERSION package
