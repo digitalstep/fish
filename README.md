@@ -1,3 +1,3 @@
-<div style="float: right">[![Build Status](https://travis-ci.org/digitalstep/fish.svg?branch=master)](https://travis-ci.org/digitalstep/fish)</div>
+<img style="float: right" src="https://travis-ci.org/digitalstep/fish.svg?branch=master">
 
 FiSh is an acronym for File-Sharing.
