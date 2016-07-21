@@ -28,14 +28,13 @@ lazy val `actor-remoting` = project.
     parallelExecution   in Test      := true,
     executeTests        in Test     <<= (executeTests in Test, executeTests in MultiJvm) map {
       case (testResults, multiNodeResults)  =>
-        val overall =
-          if (testResults.overall.id < multiNodeResults.overall.id)
-            multiNodeResults.overall
-          else
-            testResults.overall
+        val overall = if (testResults.overall.id < multiNodeResults.overall.id)
+          multiNodeResults.overall
+        else
+          testResults.overall
         Tests.Output(overall,
-                     testResults.events ++ multiNodeResults.events,
-                     testResults.summaries ++ multiNodeResults.summaries)
+                    testResults.events    ++ multiNodeResults.events,
+                    testResults.summaries ++ multiNodeResults.summaries)
     }
   ).
   configs(MultiJvm)
