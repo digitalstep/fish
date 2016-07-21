@@ -1,8 +1,10 @@
 language: scala
 scala:
-  - 2.11.8
+- 2.11.8
 jdk:
-  - oraclejdk7
-  - oraclejdk8
-
+- oraclejdk7
+- oraclejdk8
 script: sbt ++$TRAVIS_SCALA_VERSION package
+notifications:
+  slack:
+    secure: VJjnQtqe87eiQ+zajUlq76Ztgl272cYnLan1XBDUVGQTaA3DENLB3CuogKMbqRqxFpmguQmhVSd182+ORx+s44W/FDAVTUGY6B1rYcEBIYISxgvd1Hf/CACn8gieuiBdDDG5FxPzOZ8Nooxxcpep9gSuBIKS6aIYMoquz7xvaU+Si46rWTKiE+fu65yiGw0MQSMWzcnAvNedwibvHgW2bbFHgwOW1W/qq2j3Jt9DVCiAG7ufpT7URxN+eYyzjm6WtkxL2PFgagoPL8HEQh//LnYNEyGu7vdlz5xgviMX5QYxm6r5ZErOpciasYGx8ovMeugjMvTnVBD6yV+8TdWjaGNFz5OxCcF5gIvXv+UKxEfciPjFt0lA43Qg3LqxOVlaqqSSKPw/597mt8XRF4qezt0BChzMP+DJL8Lz8HkhV2nkmobkcuSZxt7ipVRXimGFwcyokkiSGZfLHysO7Qd/StrYaGqrjMDma2KsObVdrC2l4Cu6rIjK2PLpPNjNU55sQwa9RNk/KFNQ+6FKMn1K0ShkOo7SFlg5kpPlrDGUtF2s3KJhYq10nAtUaV5DTwBHCHNlzmfK/XQ2r4d01Vlv8f/VQqU7XMUC4v+BWIjhc/47rdAGrQ3SrXe/C8CgNluwGMZQoJnLbJJH+kAgR67Jz5QrVQCylA+dVDHv17vEhCY=
