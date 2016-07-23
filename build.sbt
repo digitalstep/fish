@@ -1,14 +1,14 @@
-import Dependencies._
-
+organization in ThisBuild := "de.digitalstep"
+version      in ThisBuild := "0.1"
 name := "fish"
 
-
-lazy val root = (project in file(".")).
-  aggregate(
+lazy val root = (project in file(".")).aggregate(
     core,
     cluster,
     `actor-remoting`
   )
+
+import Dependencies._
 
 lazy val core = project.
   settings(
@@ -21,6 +21,7 @@ lazy val cluster = project.
   )
 
 lazy val `actor-remoting` = project.
+  enablePlugins(JavaAppPackaging).
   settings(SbtMultiJvm.multiJvmSettings: _*).
   settings(
     libraryDependencies             ++= akka ++ circe ++ logging ++ scalatest,

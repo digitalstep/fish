@@ -12,15 +12,14 @@ class ServerSpec extends FreeSpec with Matchers {
   "A server" - {
 
     "when started" - {
-      val server = new Server().start()
-      val listenPort = Await.result(server.listenPort, 2.seconds)
+      val server = Await.result(new Server().start(), 2.seconds)
 
-      val testClient = TestClient(port = listenPort)
+      val testClient = TestClient.localhost(server.listenPort)
       val testFile = FileMetadata("test.txt")
       val testUid = "uid"
 
       "should catch a free port" in {
-        listenPort should be > 0
+        server.listenPort should be > 0
       }
 
       "should answer an HTTP request" in {
@@ -42,10 +41,10 @@ class ServerSpec extends FreeSpec with Matchers {
     }
 
     "when stopped" - {
-      val server = new Server().start()
+      val server = Await.result(new Server().start(), 2.seconds)
 
       "should not accept TCP connections anymore" in {
-        val testClient = TestClient.localhost(Await.result(server.listenPort, 1.second))
+        val testClient = TestClient.localhost(server.listenPort)
         testClient.index()
 
         Await.ready(server.stop(), 2.seconds)

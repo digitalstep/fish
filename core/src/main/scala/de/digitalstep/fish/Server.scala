@@ -1,6 +1,6 @@
 package de.digitalstep.fish
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorSystem, Terminated}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.model._
@@ -45,19 +45,26 @@ class Server {
         }
       }
 
-  def start() = new RunningServer(Http().bindAndHandle(route, "localhost", 0))
+  def start() = Http().bindAndHandle(route, "localhost", 0).map(b ⇒ new RunningServer(b))
 
 }
 
-class RunningServer(binding: Future[ServerBinding])(implicit val system: ActorSystem) {
+/**
+  * Can be stopped and queried for the port the server is currently listening on
+  */
+class RunningServer(binding: ServerBinding)(implicit val system: ActorSystem) {
   private[this] implicit val _ = system.dispatcher
 
-  def stop() = {
-    val map = binding.flatMap(_.unbind())
-    map.onComplete(_ ⇒ system.terminate())
-    map
-  }
+  /**
+    * Terminates server and ActorSystem
+    *
+    * @return a future which completes after the ActorSystem has been shut down
+    */
+  def stop(): Future[Terminated] = for {
+    b ← binding.unbind()
+    t ← system.terminate()
+  } yield t
 
-  def listenPort = binding map (_.localAddress.getPort)
+  def listenPort: Int = binding.localAddress.getPort
 
 }

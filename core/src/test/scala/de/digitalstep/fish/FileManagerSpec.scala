@@ -1,10 +1,22 @@
 package de.digitalstep.fish
 
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 import akka.stream.testkit.scaladsl.TestSink
+import akka.testkit.TestKit
 import akka.util.ByteString
-import org.scalatest.{FreeSpec, Matchers}
+import org.scalatest.{BeforeAndAfterAll, FreeSpec, FreeSpecLike, Matchers}
 
-class FileManagerSpec extends FreeSpec with Matchers {
+class FileManagerSpec extends TestKit(ActorSystem("FileManagerSpec"))
+  with FreeSpecLike
+  with Matchers
+  with BeforeAndAfterAll {
+
+  implicit val materializer = ActorMaterializer()
+
+  override def afterAll {
+    TestKit.shutdownActorSystem(system)
+  }
 
   "A file manager " - {
     val manager = new FileManager
@@ -18,7 +30,7 @@ class FileManagerSpec extends FreeSpec with Matchers {
       source.
         runWith(TestSink.probe[ByteString]).
         request(1).
-        expectNext(ByteString("T")).
+        expectNext(ByteString("This is a test\n")).
         cancel()
 
 
