@@ -6,10 +6,10 @@ object Dependencies {
     val Slf4J           = "1.7.21"
     val Logback         = "1.1.7"
     val ScalaLogging    = "3.4.0"
-    val Akka            = "2.4.8"
+    val Akka            = "2.4.9"
     val Circe           = "0.4.1"
-    val AkkaHttpCirce   = "1.7.0"
-    val ScalaTest       = "2.2.6"
+    val AkkaHttpCirce   = "1.9.0"
+    val ScalaTest       = "3.0.0"
     val SwaggerAkkaHttp = "0.6.2"
   }
 
