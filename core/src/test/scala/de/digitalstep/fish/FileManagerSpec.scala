@@ -5,7 +5,9 @@ import akka.stream.ActorMaterializer
 import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.TestKit
 import akka.util.ByteString
-import org.scalatest.{BeforeAndAfterAll, FreeSpec, FreeSpecLike, Matchers}
+import org.scalatest.{BeforeAndAfterAll, FreeSpecLike, Matchers}
+
+import testkit.TestFiles
 
 class FileManagerSpec extends TestKit(ActorSystem("FileManagerSpec"))
   with FreeSpecLike
@@ -14,7 +16,7 @@ class FileManagerSpec extends TestKit(ActorSystem("FileManagerSpec"))
 
   implicit val materializer = ActorMaterializer()
 
-  override def afterAll {
+  override def afterAll = {
     TestKit.shutdownActorSystem(system)
   }
 
@@ -30,7 +32,7 @@ class FileManagerSpec extends TestKit(ActorSystem("FileManagerSpec"))
       source.
         runWith(TestSink.probe[ByteString]).
         request(1).
-        expectNext(ByteString("This is a test\n")).
+        expectNext(ByteString(TestFiles.content("/testfile.txt"))).
         cancel()
 
 

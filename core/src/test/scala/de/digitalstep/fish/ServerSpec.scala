@@ -1,20 +1,34 @@
 package de.digitalstep.fish
 
+import akka.http.scaladsl.model.StatusCodes._
+import akka.dispatch.Futures
 import akka.stream.StreamTcpException
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
+import de.digitalstep.fish.testkit.TestFiles
 import org.scalatest._
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.util.{Try, Success, Failure}
 
-class ServerSpec extends FreeSpec with Matchers {
+class ServerSpec extends FreeSpec with Matchers with BeforeAndAfterAll {
+
+  val (server, testClient) = testServerAndClient
+
+
+  override def afterAll() = {
+    Seq(
+      server.stop(),
+      testClient.system.terminate()
+    ) foreach {
+      Await.ready(_, 2.seconds)
+    }
+  }
 
   "A server" - {
 
     "when started" - {
-      val server = Await.result(new Server().start(), 2.seconds)
 
-      val testClient = TestClient.localhost(server.listenPort)
       val testFile = FileMetadata("test.txt")
       val testUid = "uid"
 
@@ -27,34 +41,34 @@ class ServerSpec extends FreeSpec with Matchers {
       }
 
       "should accept a file upload" in {
-        testClient.upload(testFile) shouldBe testUid
+        testClient.upload(new FileSource(testFile, Source.single(ByteString("Test")))).status shouldBe Created
       }
 
       "deliver a previously uploaded file" in {
         testClient.download(testUid) shouldBe testFile
       }
 
-      "can be stopped" in {
-        Await.ready(server.stop(), 2.seconds)
-      }
-
     }
 
     "when stopped" - {
-      val server = Await.result(new Server().start(), 2.seconds)
+      val (server, testClient) = testServerAndClient
+      Await.ready(server.stop(), 2.seconds)
 
       "should not accept TCP connections anymore" in {
-        val testClient = TestClient.localhost(server.listenPort)
-        testClient.index()
-
-        Await.ready(server.stop(), 2.seconds)
         intercept[StreamTcpException] {
           testClient.index()
         }
+        Await.ready(testClient.system.terminate(), 2.seconds)
       }
 
     }
 
+  }
+
+  private[this] def testServerAndClient = {
+    val server = Await.result(new Server().start(), 2.seconds)
+    val client = TestClient.localhost(server.listenPort)
+    (server, client)
   }
 
 }
