@@ -4,11 +4,13 @@ import java.io.InputStream
 import java.nio.file.{Path, Paths}
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import akka.stream.{ActorMaterializer, IOResult}
 import akka.stream.scaladsl._
 import akka.util.ByteString
 
-class FileManager {
+import scala.concurrent.Future
+
+class FileManager extends FileWriter {
 
   val targetFolder = Paths.get("target")
 
@@ -30,5 +32,10 @@ class FileManager {
 
     "uid"
   }
+
+  override def write(f: FileSource): Future[IOResult] =
+    f.source.runWith(toPathSink(f.metadata.filename))
+
+  private[this] def toPathSink(filename: String) = FileIO.toPath(Paths.get(filename))
 
 }

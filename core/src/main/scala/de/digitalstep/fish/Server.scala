@@ -11,39 +11,43 @@ import akka.stream.ActorMaterializer
 
 import scala.concurrent.Future
 
-class Server {
+class Server extends UploadRoute {
 
   implicit val system = ActorSystem("server")
-  private[this] implicit val materializer = ActorMaterializer()
-  private[this] implicit val executionContext = system.dispatcher
+  implicit val materializer = ActorMaterializer()
+  implicit val executionContext = system.dispatcher
+
+  implicit val fileWriter: FileWriter = new FileManager
 
   val listenPort = 1
 
   val route =
-    path("") {
-      get {
-        complete {
-          HttpEntity(`text/plain(UTF-8)`, "Hello, World!")
-        }
+  helloWorld ~
+  upload ~
+  download
+
+  lazy val download = path("download" / "uid") {
+    get {
+      complete {
+        HttpResponse(
+        status = OK,
+        entity = HttpEntity(`application/octet-stream`, "asdf".getBytes)
+        )
       }
-    } ~
-      path("upload") {
-        post {
-          complete {
-            HttpResponse(
-              status = Created,
-              entity = HttpEntity("uid")
-            )
-          }
-        }
-      } ~
-      path("download" / "uid") {
-        get {
-          complete {
-            HttpEntity(`application/octet-stream`, "asdf".getBytes)
-          }
-        }
+    }
+  }
+
+  lazy val helloWorld = pathSingleSlash {
+    get {
+      complete {
+        HttpResponse(
+        status = OK,
+        entity = HttpEntity(`text/plain(UTF-8)`, "Hello, World!")
+        )
       }
+    }
+  }
+
 
   def start() = Http().bindAndHandle(route, "localhost", 0).map(b ⇒ new RunningServer(b))
 

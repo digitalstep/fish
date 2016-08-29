@@ -5,9 +5,9 @@ import akka.http.scaladsl.model.headers.{ModeledCustomHeader, ModeledCustomHeade
 import scala.util.Try
 
 final class FilenameHeader(filename: String) extends ModeledCustomHeader[FilenameHeader] {
-  def renderInRequests = false
+  def renderInRequests = true
 
-  def renderInResponses = false
+  def renderInResponses = true
 
   val companion = FilenameHeader
 
